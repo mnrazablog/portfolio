@@ -1,239 +1,111 @@
-import React, { useState, useCallback, useMemo, memo, useRef, useEffect } from 'react';
+import React from 'react';
 import { skills } from '../../constants/index.js';
 import SkillPill from '../SkillPill';
 
-const COLOR_THEMES = {
-  cyan: {
-    title: 'text-cyan-400',
-    border: 'hover:border-cyan-500/30',
-    shadow: 'hover:shadow-cyan-900/10',
-    icon: 'text-cyan-400 group-hover:text-cyan-300',
-    underline: 'bg-gradient-to-r from-transparent via-cyan-500 to-transparent',
-    cssVar: '--skill-color: #06b6d4',
-  },
-  emerald: {
-    title: 'text-emerald-400',
-    border: 'hover:border-emerald-500/30',
-    shadow: 'hover:shadow-emerald-900/10',
-    icon: 'text-emerald-400 group-hover:text-emerald-300',
-    underline: 'bg-gradient-to-r from-transparent via-emerald-500 to-transparent',
-    cssVar: '--skill-color: #10b981',
-  },
-  purple: {
-    title: 'text-purple-400',
-    border: 'hover:border-purple-500/30',
-    shadow: 'hover:shadow-purple-900/10',
-    icon: 'text-purple-400 group-hover:text-purple-300',
-    underline: 'bg-gradient-to-r from-transparent via-purple-500 to-transparent',
-    cssVar: '--skill-color: #a855f7',
-  },
-  orange: {
-    title: 'text-orange-400',
-    border: 'hover:border-orange-500/30',
-    shadow: 'hover:shadow-orange-900/10',
-    icon: 'text-orange-400 group-hover:text-orange-300',
-    underline: 'bg-gradient-to-r from-transparent via-orange-500 to-transparent',
-    cssVar: '--skill-color: #fb923c',
-  },
-  pink: {
-    title: 'text-pink-400',
-    border: 'hover:border-pink-500/30',
-    shadow: 'hover:shadow-pink-900/10',
-    icon: 'text-pink-400 group-hover:text-pink-300',
-    underline: 'bg-gradient-to-r from-transparent via-pink-500 to-transparent',
-    cssVar: '--skill-color: #f472b6',
-  },
-};
-
-const SkillSection = memo(({ title, skillsList, color = 'cyan' }) => {
-  const [skillItems, setSkillItems] = useState(skillsList);
-  const [draggedIndex, setDraggedIndex] = useState(null);
-  const [imageErrors, setImageErrors] = useState(new Set());
-
-  const colors = useMemo(() => {
-    const theme = COLOR_THEMES[color] || COLOR_THEMES.cyan;
-    return theme;
-  }, [color]);
-
-  const handleDragStart = useCallback((e, index) => {
-    setDraggedIndex(index);
-    e.dataTransfer.setData('text/plain', index.toString());
-    e.dataTransfer.effectAllowed = 'move';
-  }, []);
-
-  const handleDragOver = useCallback((e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  }, []);
-
-  const handleDrop = useCallback(
-    (e, dropIndex) => {
-      e.preventDefault();
-
-      if (draggedIndex === null || draggedIndex === dropIndex) return;
-
-      setSkillItems((prevSkills) => {
-        const newSkills = [...prevSkills];
-        const draggedSkill = newSkills[draggedIndex];
-
-        newSkills.splice(draggedIndex, 1);
-        newSkills.splice(dropIndex, 0, draggedSkill);
-
-        return newSkills;
-      });
-      setDraggedIndex(null);
-    },
-    [draggedIndex],
-  );
-
-  const handleDragEnd = useCallback(() => {
-    setDraggedIndex(null);
-  }, []);
-
-  const handleImageError = useCallback((skillId) => {
-    setImageErrors((prev) => new Set(prev).add(skillId));
-  }, []);
-
-  return (
-    <div className="space-y-6">
-      <div className="mb-12 text-center">
-        <h3 className={`text-2xl font-bold ${colors.title} inline-block relative`}>
-          {title}
-          <div className={`absolute -bottom-2 left-0 right-0 h-0.5 ${colors.underline}`}></div>
-        </h3>
-      </div>
-      <div className="flex flex-wrap justify-center gap-3">
-        {skillItems.map((skill, index) => (
-          <SkillPill
-            key={`${skill.id}-${index}`}
-            skill={skill}
-            index={index}
-            colors={colors}
-            isDragging={draggedIndex === index}
-            hasImageError={imageErrors.has(skill.id)}
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-            onDragEnd={handleDragEnd}
-            onImageError={() => handleImageError(skill.id)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-});
-
-const TechnicalSkills = memo(() => {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
+const TechnicalSkills = () => {
+  const skillSections = [
+    {
+      title: 'Frontend',
+      skillsList: skills.frontend,
+      color: {
+        border: 'hover:border-cyan-500/30',
+        shadow: 'hover:shadow-cyan-900/10',
+        icon: 'text-cyan-400 group-hover:text-cyan-300',
       },
-      { threshold: 0.1 },
-    );
+    },
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+    {
+      title: 'Backend',
+      skillsList: skills.backend,
+      color: {
+        border: 'hover:border-emerald-500/30',
+        shadow: 'hover:shadow-emerald-900/10',
+        icon: 'text-emerald-400 group-hover:text-emerald-300',
+      },
+    },
 
-    return () => observer.disconnect();
-  }, []);
+    // NEW MOBILE SECTION
+    {
+      title: 'Mobile',
+      skillsList: skills.mobile,
+      color: {
+        border: 'hover:border-orange-500/30',
+        shadow: 'hover:shadow-orange-900/10',
+        icon: 'text-orange-400 group-hover:text-orange-300',
+      },
+    },
 
-  // Memoized skill sections configuration
-  const skillSections = useMemo(
-    () => [
-      { title: 'Frontend Development', skillsList: skills.frontend, color: 'cyan' },
-      { title: 'Backend Development', skillsList: skills.backend, color: 'emerald' },
-      { title: 'DevOps & Cloud', skillsList: skills.devops, color: 'purple' },
-      { title: 'Mobile Development', skillsList: skills.mobile, color: 'orange' },
-      { title: 'AI & Machine Learning', skillsList: skills.ai_ml, color: 'pink' },
-      { title: 'Tools & Platforms', skillsList: skills.tools, color: 'cyan' },
-    ],
-    [],
-  );
-
-  // Memoized header content
-  const headerContent = useMemo(
-    () => (
-      <div className="text-center mb-16">
-        <div className="inline-block">
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-2"></span>
-            <span className="tracking-wider">MY EXPERTISE</span>
-          </span>
-        </div>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-          Technical{' '}
-          <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">Expertise</span>
-        </h2>
-        <p className="max-w-3xl mx-auto text-xl text-gray-400 leading-relaxed">
-          With <b>10+</b> years of experience, I've developed a comprehensive skill set spanning frontend, backend,
-          mobile development, cybersecurity, and server administration.
-        </p>
-      </div>
-    ),
-    [],
-  );
-
-  if (!isVisible) {
-    return (
-      <section ref={sectionRef} className="relative min-h-[400px]">
-        <div className="flex items-center justify-center h-full">
-          <div className="animate-pulse text-gray-400">Loading skills...</div>
-        </div>
-      </section>
-    );
-  }
+    {
+      title: 'Tools',
+      skillsList: skills.tools,
+      color: {
+        border: 'hover:border-purple-500/30',
+        shadow: 'hover:shadow-purple-900/10',
+        icon: 'text-purple-400 group-hover:text-purple-300',
+      },
+    },
+  ];
 
   return (
     <section
-      ref={sectionRef}
-      className="relative py-20 px-4 md:px-8 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 overflow-hidden">
-      <div className="max-w-6xl mx-auto">
+      id="skills"
+      className="relative overflow-hidden py-24 text-white"
+    >
+      {/* Background */}
+      <div className="absolute inset-0">
+        <div className="absolute left-0 top-0 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
+
+        <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-6xl px-6">
+        {/* Heading */}
         <div className="mb-16 text-center">
-          <div className="inline-block">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-2"></span>
-              <span className="tracking-wider">MY EXPERTISE</span>
-            </span>
-          </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-            Technical{' '}
-            <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-white/5 px-4 py-2 text-sm text-emerald-300 backdrop-blur-md">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+            My Skills
+          </span>
+
+          <h2 className="text-4xl font-black tracking-tight sm:text-5xl">
+            Technical
+            <span className="bg-gradient-to-r from-emerald-300 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
+              {' '}
               Expertise
             </span>
           </h2>
-          <div className="flex justify-center mb-6">
-            <span className="block w-24 h-1 rounded-full bg-gradient-to-r from-emerald-400/30 via-cyan-400/40 to-purple-400/30"></span>
-          </div>
-          <p className="max-w-3xl mx-auto text-xl text-gray-400 leading-relaxed">
-            With <b>10+</b> years of experience, I've developed a comprehensive skill set spanning frontend, backend,
-            mobile development, cybersecurity, and server administration.
+
+          <p className="mx-auto mt-4 max-w-2xl text-zinc-400">
+            Technologies and tools I use to build modern, scalable and
+            high-performance applications.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-          {skillSections.map((section, index) => (
-            <div key={`${section.title}-${index}`} className="relative">
-              <SkillSection title={section.title} skillsList={section.skillsList} color={section.color} />
-              {index !== skillSections.length - 1 && (
-                <div className="hidden md:block absolute -right-8 top-0 h-full w-0.5 bg-gradient-to-b from-transparent via-gray-800/60 to-transparent" />
-              )}
-              {index !== skillSections.length - 1 && (
-                <div className="block md:hidden my-10 h-0.5 w-2/3 mx-auto bg-gradient-to-r from-transparent via-gray-800/60 to-transparent" />
-              )}
+        {/* Skills Grid */}
+        <div className="grid gap-8 md:grid-cols-2">
+          {skillSections.map((section) => (
+            <div
+              key={section.title}
+              className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-2xl transition-all duration-300 hover:border-white/20"
+            >
+              <h3 className="mb-6 text-2xl font-bold text-white">
+                {section.title}
+              </h3>
+
+              <div className="flex flex-wrap gap-3">
+                {section.skillsList.map((tech) => (
+                  <SkillPill
+                    key={tech.id}
+                    skill={tech}
+                    colors={section.color}
+                  />
+                ))}
+              </div>
             </div>
           ))}
         </div>
       </div>
     </section>
   );
-});
+};
 
 export default TechnicalSkills;

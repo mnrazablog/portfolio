@@ -1,290 +1,202 @@
-import { PerspectiveCamera } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
-import React, { Suspense, useState, useEffect } from 'react';
-
-import { useMediaQuery } from 'react-responsive';
-import { calculateSizes, skills } from '../../constants/index.js';
-import Button from '../Button.jsx';
+import React, { useEffect, useState } from 'react';
 import { IconArrowRight } from '@tabler/icons-react';
+import Button from '../Button.jsx';
+
+const roles = [
+  'Frontend Developer',
+  'React Native Developer',
+  'Full Stack Developer',
+  'MERN Stack Developer',
+  'PERN Stack Developer',
+];
 
 const Hero = () => {
-  const isSmall = useMediaQuery({ maxWidth: 440 });
-  const isMobile = useMediaQuery({ maxWidth: 768 });
-  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1024 });
-  const sizes = calculateSizes(isSmall, isMobile, isTablet);
-
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const [currentText, setCurrentText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  const roleTexts = ['Product Builder', 'Software Developer', 'Frontend Developer', 'Tech Enthusiast'];
+  const [text, setText] = useState('');
+  const [index, setIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(0);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    const currentRole = roleTexts[currentTextIndex];
-    
-    if (!isDeleting) {
-      // Typing effect
-      if (currentText.length < currentRole.length) {
-        const timeout = setTimeout(() => {
-          setCurrentText(currentRole.slice(0, currentText.length + 1));
-        }, 100);
-        return () => clearTimeout(timeout);
-      } else {
-        // Wait before starting to delete
-        const timeout = setTimeout(() => {
-          setIsDeleting(true);
-        }, 2000);
-        return () => clearTimeout(timeout);
-      }
-    } else {
-      // Deleting effect
-      if (currentText.length > 0) {
-        const timeout = setTimeout(() => {
-          setCurrentText(currentText.slice(0, currentText.length - 1));
-        }, 50);
-        return () => clearTimeout(timeout);
-      } else {
-        // Move to next text
-        setIsDeleting(false);
-        setCurrentTextIndex((prev) => (prev + 1) % roleTexts.length);
-      }
-    }
-  }, [currentText, currentTextIndex, isDeleting, roleTexts]);
+    const currentRole = roles[index];
 
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth) * 100,
-        y: (e.clientY / window.innerHeight) * 100,
-      });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+    const timeout = setTimeout(() => {
+      if (!deleting) {
+        setText(currentRole.substring(0, subIndex + 1));
+        setSubIndex((prev) => prev + 1);
+
+        if (subIndex === currentRole.length) {
+          setTimeout(() => {
+            setDeleting(true);
+          }, 1200);
+        }
+      } else {
+        setText(currentRole.substring(0, subIndex - 1));
+        setSubIndex((prev) => prev - 1);
+
+        if (subIndex === 0) {
+          setDeleting(false);
+          setIndex((prev) => (prev + 1) % roles.length);
+        }
+      }
+    }, deleting ? 40 : 70);
+
+    return () => clearTimeout(timeout);
+  }, [subIndex, index, deleting]);
 
   return (
-    <section id="home" className="text-white min-h-screen w-full flex flex-col relative overflow-hidden bg-black">
-      {/* Main hero content block and profile card only, backgrounds removed */}
-      <div className="relative z-10 flex-1 flex flex-col lg:flex-row gap-8 gap-y-12 items-stretch justify-center">
-        {/* Main hero content block */}
-        <div className="w-full max-w-2xl mx-auto flex flex-col sm:mt-10 mt-4 c-space gap-2">
-          {/* Main hero content block, refactored to match reference */}
-          <div className="space-y-8">
-            {/* Badge */}
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full backdrop-blur-sm">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-sm shadow-emerald-500/50"></div>
-                <span
-                  className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-cyan-400 bg-clip-text text-transparent font-semibold tracking-wide text-sm"
-                  style={{ textShadow: 'rgba(16, 185, 129, 0.318) 0px 0px 5.45364px' }}>
-                  Available for opportunities
-                </span>
-              </div>
-            </div>
-            {/* Headline and subheadline */}
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[0.9] tracking-tight">
-                  <span className="block text-gray-300 font-light">Welcome, I'm</span>
-                  <span className="block bg-gradient-to-r from-emerald-400 via-emerald-300 to-cyan-400 bg-clip-text text-transparent font-bold">
-                    Noorullah Raza
-                  </span>
-                </h1>
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-light text-gray-400 tracking-wide">
-                  {currentText}
-                  <span className="animate-pulse">|</span>
-                </h2>
-              </div>
-            </div>
-            {/* Description */}
-            <div>
-              <p className="text-lg md:text-xl text-gray-400 leading-relaxed max-w-xl font-light">
-                I craft exceptional digital experiences with modern technologies. Specializing in
-                <span className="text-emerald-400 font-medium"> React applications</span>,
-                <span className="text-cyan-400 font-medium"> mobile development</span>, and
-                <span className="text-teal-400 font-medium"> secure systems</span>.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-4 w-fit mx-auto">
-              <span className="w-fit px-4 py-2 border rounded-full text-sm font-medium backdrop-blur-sm shadow-sm transition-all duration-300 cursor-default flex items-center gap-2 bg-emerald-900/20 border-emerald-500/30 text-emerald-300 hover:border-emerald-400/60 hover:shadow-emerald-500/20">
-                <img src={skills.frontend[2].image} alt="React" className="w-4 h-4" loading="lazy" />
-                <span>{skills.frontend[2].name}</span>
-              </span>
-              <span className="w-fit px-4 py-2 border rounded-full text-sm font-medium backdrop-blur-sm shadow-sm transition-all duration-300 cursor-default flex items-center gap-2 bg-cyan-900/20 border-cyan-500/30 text-cyan-300 hover:border-cyan-400/60 hover:shadow-cyan-500/20">
-                <img src={skills.frontend[1].image} alt="TypeScript" className="w-4 h-4" loading="lazy" />
-                <span>{skills.frontend[1].name}</span>
-              </span>
-              <span className="w-fit px-4 py-2 border rounded-full text-sm font-medium backdrop-blur-sm shadow-sm transition-all duration-300 cursor-default flex items-center gap-2 bg-cyan-900/20 border-cyan-500/30 text-cyan-300 hover:border-cyan-400/60 hover:shadow-cyan-500/20">
-                <img src={skills.backend[0].image} alt="Node.js" className="w-4 h-4" loading="lazy" />
-                <span>{skills.backend[0].name}</span>
-              </span>
-              <span className="w-fit px-4 py-2 border rounded-full text-sm font-medium backdrop-blur-sm shadow-sm transition-all duration-300 cursor-default flex items-center gap-2 bg-emerald-900/20 border-emerald-500/30 text-emerald-300 hover:border-emerald-400/60 hover:shadow-emerald-500/20">
-                <img src={skills.backend[2].image} alt="MongoDB" className="w-4 h-4" loading="lazy" />
-                <span>{skills.backend[2].name}</span>
-              </span>
-            </div>
+    <section
+      id="home"
+      className="relative min-h-screen overflow-hidden bg-black text-white"
+    >
+      {/* Background */}
+      <div className="absolute inset-0">
+        <div className="absolute left-[-10%] top-0 h-96 w-96 rounded-full bg-emerald-500/20 blur-3xl" />
 
-            {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row items-center gap-6">
-              <a className="w-fit group" href="#contact">
-                <Button
-                  name={"Let's work together"}
-                  isBeam
-                  containerClass="sm:w-fit w-full sm:min-w-64  hover:shadow-xl transform  transition-all duration-300"
-                />
-              </a>
-              <a 
-                href="#projects"
-                className="w-fit px-8 py-3 cursor-pointer border rounded-full text-sm font-medium backdrop-blur-sm shadow-sm transition-all duration-300 flex items-center gap-2 bg-emerald-900/20 border-emerald-500/30 text-emerald-300 hover:border-emerald-400/60 hover:shadow-emerald-500/20 group"
-              >
-                View my work <IconArrowRight />
-              </a>
+        <div className="absolute bottom-[-10%] right-[-10%] h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" />
+
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:5rem_5rem]" />
+      </div>
+
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center gap-16 px-6 py-20 lg:flex-row">
+        {/* Left */}
+        <div className="flex-1">
+          {/* Badge */}
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-white/5 px-4 py-2 backdrop-blur-md">
+            <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+
+            <span className="text-sm text-emerald-300">
+              Available for freelance work
+            </span>
+          </div>
+
+          {/* Heading */}
+          <div className="space-y-4">
+            <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+              <span className="font-light text-white/70">
+                Hey, I'm
+              </span>
+
+              <br />
+
+              <span className="bg-gradient-to-r from-emerald-300 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
+                Noorullah Raza
+              </span>
+            </h1>
+
+            {/* Typing Role */}
+            <div className="flex h-10 items-center gap-2">
+              <span className="text-xl font-medium text-zinc-300 sm:text-2xl">
+                {text}
+              </span>
+
+              <span className="h-6 w-[3px] animate-pulse rounded-full bg-emerald-400" />
             </div>
           </div>
-        </div>
-        {/* Right-side developer profile card */}
-        <div className="w-full max-w-xl mx-auto mt-0 flex-shrink-0 flex justify-center items-start lg:mt-0">
-          <div className="bg-gray-950/80 backdrop-blur-md rounded-2xl border border-emerald-900/30 px-10 py-4 font-mono text-sm shadow-2xl w-full max-w-xl flex flex-col gap-6">
-            <div className="flex items-center gap-2 mb-0 pb-4 border-b border-gray-800/80">
-              <div className="flex gap-2">
-                <div className="w-3 h-3 bg-red-500 rounded-full shadow-sm shadow-red-500/20"></div>
-                <div className="w-3 h-3 bg-yellow-500 rounded-full shadow-sm shadow-yellow-500/20"></div>
-                <div className="w-3 h-3 bg-green-500 rounded-full shadow-sm shadow-green-500/20"></div>
-              </div>
-              <span className="text-emerald-300/70 ml-4 text-xs font-medium">~/portfolio/developer.ts</span>
-            </div>
-            <div className="space-y-4 text-sm">
-              <div className="text-gray-500">// Professional Developer Profile</div>
-              <div>
-                <span className="text-purple-400">const</span> <span className="text-blue-300">developer</span> = {'{'}
-              </div>
-              <div className="ml-4">
-                <span className="text-emerald-400">name</span>:{' '}
-                <span className="text-yellow-300">"Md Noorullah Raza"</span>,
-              </div>
-              <div className="ml-4">
-                <span className="text-emerald-400">role</span>:{' '}
-                <span className="text-yellow-300">"Frontend Developer"</span>,
-              </div>
-              <div className="ml-4">
-                <span className="text-emerald-400">experience</span>: <span className="text-cyan-400">4</span>{' '}
-                <span className="text-gray-500">// years</span>,
-              </div>
-              <div className="ml-4">
-                <span className="text-emerald-400">technologies</span>: [
-              </div>
-              <div className='ml-8'>
-              <span className="text-yellow-300">"JavaScript"</span>,{' '}
-              <span className="text-yellow-300">"TypeScript"</span>,{' '}
-              </div>
-              <div className="ml-8">
 
-                <span className="text-yellow-300">"React.js"</span>,{' '}
-                <span className="text-yellow-300">"Next.js"</span>,{' '}
-              </div>
-              <div className="ml-8">
-                <span className="text-yellow-300">"Node.js"</span>, {' '}
-                <span className="text-yellow-300">"Express"</span>,
-              </div>
-              <div className="ml-8">
-                <span className="text-yellow-300">"MongoDB"</span> {' '}
-                <span className="text-yellow-300">"PostgreSQL"</span>
-              </div>
-              <div className="ml-4">],</div>
-              <div className="ml-4">
-                <span className="text-emerald-400">passion</span>:{' '}
-                <span className="text-yellow-300">"Building innovative solutions"</span>,
-              </div>
-              <div className="ml-4">
-                <span className="text-emerald-400">currentStatus</span>:{' '}
-                <span className="text-green-400">"Available for projects"</span>
-              </div>
-              <div>{'}'};</div>
-              <div className="mt-4 text-gray-500">// Let's build something amazing together!</div>
-            </div>
-            {/* Social links */}
-            <div style={{ opacity: 1, transform: 'none' }}>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 pt-5">
-                <span
-                  className="text-emerald-300/80 text-sm font-medium flex items-center gap-2"
-                  style={{ color: 'rgba(110, 231, 183, 0.694)' }}>
-                  <div className="h-px w-5 bg-emerald-500/50"></div>Connect with me
-                </span>
-                <div className="flex gap-3">
-                  <a
-                    href="https://twitter.com/mnraza_codes"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 text-gray-400 transition-all duration-300 rounded-lg flex items-center justify-center relative overflow-hidden group"
-                    tabIndex={0}
-                    style={{
-                      background: 'rgba(10, 10, 15, 0.5)',
-                      boxShadow: 'rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.2) 0px 0px 10px',
-                      opacity: 1,
-                      transform: 'none',
-                    }}>
-                    <div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg"
-                      style={{
-                        boxShadow: 'inset 0 0 15px #1DA1F240, 0 0 20px #1DA1F220',
-                        background: 'radial-gradient(circle at center, #1DA1F210 0%, transparent 70%)',
-                      }}></div>
-                    <svg
-                      stroke="currentColor"
-                      fill="currentColor"
-                      strokeWidth="0"
-                      viewBox="0 0 512 512"
-                      className="w-5 h-5 relative z-10 transition-all duration-300 group-hover:text-white"
-                      style={{ filter: 'drop-shadow(0 0 2px transparent)' }}
-                      height="1em"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg">
-                      <path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path>
-                    </svg>
-                    <div
-                      className="absolute inset-0 rounded-lg"
-                      style={{ border: '1px solid rgba(255, 255, 255, 0.133)' }}></div>
-                  </a>
-                  <a
-                    href="https://linkedin.com/in/mnraza1907"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2.5 text-gray-400 transition-all duration-300 rounded-lg flex items-center justify-center relative overflow-hidden group"
-                    tabIndex={0}
-                    style={{
-                      background: 'rgba(10, 10, 15, 0.5)',
-                      boxShadow: 'rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.2) 0px 0px 10px',
-                      opacity: 1,
-                      transform: 'none',
-                    }}>
-                    <div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg"
-                      style={{
-                        boxShadow: 'inset 0 0 15px #0077B540, 0 0 20px #0077B520',
-                        background: 'radial-gradient(circle at center, #0077B510 0%, transparent 70%)',
-                      }}></div>
-                    <svg
-                      stroke="currentColor"
-                      fill="currentColor"
-                      strokeWidth="0"
-                      viewBox="0 0 448 512"
-                      className="w-5 h-5 relative z-10 transition-all duration-300 group-hover:text-white"
-                      style={{ filter: 'drop-shadow(0 0 2px transparent)' }}
-                      height="1em"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg">
-                      <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path>
-                    </svg>
-                    <div
-                      className="absolute inset-0 rounded-lg"
-                      style={{ border: '1px solid rgba(255, 255, 255, 0.133)' }}></div>
-                  </a>
-                </div>
-              </div>
-            </div>
+          {/* Description */}
+          <p className="mt-8 max-w-2xl text-base leading-relaxed text-zinc-400 sm:text-lg">
+            Building modern, scalable and visually stunning digital
+            products with smooth interactions, clean architecture and
+            exceptional user experiences.
+          </p>
+
+          {/* Buttons */}
+          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+            <a href="#contact">
+              <Button
+                name="Let's work together"
+                isBeam
+                containerClass="min-w-[220px]"
+              />
+            </a>
+
+            <a
+              href="#projects"
+              className="group flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-7 py-3 text-sm font-medium text-zinc-200 backdrop-blur-md transition-all duration-300 hover:border-emerald-400/40 hover:bg-emerald-500/10 hover:text-white"
+            >
+              View Projects
+
+              <IconArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+            </a>
           </div>
         </div>
+
+      {/* Right Side */}
+<div className="relative flex w-full max-w-md flex-1 flex-col items-center justify-center">
+  {/* Glow */}
+  <div className="absolute h-72 w-72 rounded-full bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 blur-3xl" />
+
+  {/* Image Card */}
+  <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-5 backdrop-blur-2xl">
+    <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
+
+    <img
+      src="/assets/mnraza-dev.png"
+      alt="Noorullah Raza"
+      className="relative z-10 h-[420px] w-full rounded-[1.5rem] object-cover"
+    />
+
+    {/* Floating Badge */}
+    <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/40 px-4 py-2 backdrop-blur-xl">
+      <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+
+      <span className="text-sm text-zinc-200">
+        Building cool stuff since 2021
+      </span>
+    </div>
+  </div>
+
+  {/* Socials */}
+  <div className="mt-6 flex items-center gap-4">
+    <a
+      href="https://twitter.com/mnraza_codes"
+      target="_blank"
+      rel="noreferrer"
+      className="group flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-zinc-400 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:bg-cyan-500/10 hover:text-white"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        className="h-5 w-5"
+      >
+        <path d="M18.244 2H21.5l-7.12 8.136L22.75 22h-6.555l-5.133-6.71L5.2 22H1.94l7.614-8.702L1.5 2h6.722l4.64 6.116L18.244 2Zm-1.15 18h1.803L7.247 3.896H5.313L17.094 20Z" />
+      </svg>
+    </a>
+
+    <a
+      href="https://linkedin.com/in/mnraza1907"
+      target="_blank"
+      rel="noreferrer"
+      className="group flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-zinc-400 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-emerald-400/40 hover:bg-emerald-500/10 hover:text-white"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 448 512"
+        fill="currentColor"
+        className="h-5 w-5"
+      >
+        <path d="M100.28 448H7.4V148.9h92.88zm-46.44-340a53.79 53.79 0 1 1 53.79-53.8 53.79 53.79 0 0 1-53.79 53.8zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.7-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
+      </svg>
+    </a>
+
+    <a
+      href="https://github.com/"
+      target="_blank"
+      rel="noreferrer"
+      className="group flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-zinc-400 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-purple-400/40 hover:bg-purple-500/10 hover:text-white"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 496 512"
+        fill="currentColor"
+        className="h-5 w-5"
+      >
+        <path d="M248 8C111 8 0 119 0 256c0 109.8 71.5 202.9 170.7 235.8 12.5 2.3 17.1-5.4 17.1-12v-42.2c-69.5 15.1-84.2-29.5-84.2-29.5-11.4-28.8-27.8-36.5-27.8-36.5-22.7-15.5 1.7-15.2 1.7-15.2 25.1 1.8 38.3 25.8 38.3 25.8 22.3 38.3 58.6 27.2 72.9 20.8 2.3-16.2 8.7-27.2 15.8-33.5-55.5-6.3-113.9-27.8-113.9-123.7 0-27.3 9.7-49.5 25.6-66.9-2.6-6.3-11.1-31.7 2.4-66.1 0 0 20.9-6.7 68.5 25.6a236.4 236.4 0 0 1 124.7 0c47.6-32.3 68.5-25.6 68.5-25.6 13.5 34.4 5 59.8 2.4 66.1 15.9 17.4 25.6 39.6 25.6 66.9 0 96.1-58.5 117.3-114.2 123.5 9 7.8 17 23.1 17 46.6v69.1c0 6.7 4.5 14.5 17.2 12C424.5 458.9 496 365.8 496 256 496 119 385 8 248 8z" />
+      </svg>
+    </a>
+  </div>
+</div>
       </div>
     </section>
   );

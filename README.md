@@ -8,7 +8,6 @@ Visit the live website: [https://mnraza.vercel.app/](https://mnraza.vercel.app/)
 
 ## 🚀 Features
 
-- Interactive 3D elements using Three.js
 - Responsive design with Tailwind CSS
 - Smooth animations and transitions
 - Modern UI/UX design
@@ -40,13 +39,10 @@ Visit the live website: [https://mnraza.vercel.app/](https://mnraza.vercel.app/)
 - `src/components/` - React components
 - `src/sections/`  - Page sections
 - `public/assets/` - Static assets
-- `public/models/` - 3D models
-- `public/textures/` - Textures for 3D models
 
 ## 🎨 Customization
 The portfolio can be easily customized by:
 - Updating personal information in components
-- Replacing 3D models in the `public/models/` directory
 - Modifying styles using Tailwind CSS classes
 - Adding new sections as needed
 ## 📄 License

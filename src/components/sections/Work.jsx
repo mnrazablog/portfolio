@@ -1,99 +1,218 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { myProjects } from '../../constants';
 import ProjectCard from '../ProjectCard';
+import {
+  IconSparkles,
+  IconArrowUpRight,
+  IconCode,
+  IconDeviceMobile,
+  IconLayoutGrid,
+} from '@tabler/icons-react';
 
-// Reusable LazyVideo component
-const LazyVideo = ({ src, poster, ...props }) => {
-  const videoRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new window.IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    if (videoRef.current) {
-      observer.observe(videoRef.current);
-    }
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div ref={videoRef} style={{ minHeight: 200 }}>
-      {isVisible && (
-        <video
-          src={src}
-          poster={poster}
-          controls
-          preload="none"
-          width="100%"
-          height="auto"
-          {...props}
-        />
-      )}
-    </div>
-  );
-};
+const categories = [
+  {
+    name: 'All',
+    icon: <IconSparkles size={16} />,
+  },
+  {
+    name: 'Web Apps',
+    icon: <IconLayoutGrid size={16} />,
+  },
+  {
+    name: 'Mobile Apps',
+    icon: <IconDeviceMobile size={16} />,
+  },
+  {
+    name: 'Full Stack',
+    icon: <IconCode size={16} />,
+  },
+];
 
 const Work = () => {
+  const [active, setActive] = useState('All');
+
   return (
-    <section id="projects" className="c-space my-20">
-      <div className="text-center mb-16" style={{ opacity: 1 }}>
-        <div className="inline-block" style={{ opacity: 1, transform: 'none' }}>
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-2"></span>
-            <span className="tracking-wider">FEATURED WORK</span>
-          </span>
-        </div>
-        <h2
-          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent"
-          style={{ opacity: 1, transform: 'none' }}>
-          Recent{' '}
-          <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">Projects</span>
-        </h2>
-        <p
-          className="max-w-3xl mx-auto text-xl text-gray-400 leading-relaxed"
-          style={{ opacity: 1, transform: 'none' }}>
-          Showcasing my work on projects ranging from web applications to mobile solutions, with a focus on user
-          experience and technical excellence.
-        </p>
-        <div className="flex flex-wrap justify-center gap-2 mt-8" style={{ opacity: 1, transform: 'none' }}>
-          <button className="px-5 py-2 rounded-full transition-all duration-300 relative bg-gray-900/80 text-emerald-300 border border-emerald-500/50">
-            <span className="absolute inset-0 rounded-full bg-emerald-500/10 animate-pulse"></span>
-            <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 h-[1px] w-2/3 bg-gradient-to-r from-transparent via-emerald-400 to-transparent"></span>
-            <span className="relative z-10">All</span>
-          </button>
-          <button className="px-5 py-2 rounded-full transition-all duration-300 relative bg-gray-900/80 text-gray-400 border border-gray-800 hover:border-gray-700 hover:text-gray-300">
-            <span className="relative z-10">Web Development</span>
-          </button>
-          <button className="px-5 py-2 rounded-full transition-all duration-300 relative bg-gray-900/80 text-gray-400 border border-gray-800 hover:border-gray-700 hover:text-gray-300">
-            <span className="relative z-10">Web Application</span>
-          </button>
-          <button className="px-5 py-2 rounded-full transition-all duration-300 relative bg-gray-900/80 text-gray-400 border border-gray-800 hover:border-gray-700 hover:text-gray-300">
-            <span className="relative z-10">Mobile Application</span>
-          </button>
-        </div>
+    <section
+      id="projects"
+      className="relative overflow-hidden py-32 text-white"
+    >
+      {/* Background */}
+      <div className="absolute inset-0">
+        <div className="absolute left-[-10%] top-0 h-[500px] w-[500px] rounded-full bg-emerald-500/10 blur-[140px]" />
+
+        <div className="absolute bottom-[-20%] right-[-10%] h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-[140px]" />
+
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:5rem_5rem]" />
       </div>
-      <div className="mt-10 mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-        {myProjects.map((project, idx) => (
-          <ProjectCard
-            key={project.title + idx}
-            title={project.title}
-            description={project.desc}
-            image={project.logo}
-            year={project.year}
-            type={project.type}
-            tags={project.tags}
-            href={project.href}
-            repo={project.repo}
-            index={idx}
-          />
-        ))}
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 80 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="mx-auto mb-24 max-w-4xl text-center"
+        >
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-white/5 px-5 py-2 backdrop-blur-xl">
+            <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+
+            <span className="text-sm tracking-[0.2em] text-emerald-300">
+              FEATURED PROJECTS
+            </span>
+          </div>
+
+          <h2 className="text-5xl font-black leading-tight tracking-tight sm:text-6xl lg:text-7xl">
+            Crafting
+            <span className="bg-gradient-to-r from-emerald-300 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
+              {' '}
+              Digital
+            </span>
+            <br />
+            Experiences
+          </h2>
+
+          <p className="mx-auto mt-8 max-w-3xl text-lg leading-relaxed text-zinc-400 sm:text-xl">
+            A collection of premium web and mobile applications focused on
+            performance, smooth interactions, scalable architecture and modern
+            user experiences.
+          </p>
+
+          {/* Categories */}
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+            {categories.map((item, index) => (
+              <button
+                key={index}
+                onClick={() => setActive(item.name)}
+                className={`group relative overflow-hidden rounded-2xl border px-5 py-3 text-sm font-medium transition-all duration-500 ${
+                  active === item.name
+                    ? 'border-emerald-400/40 bg-emerald-500/10 text-white shadow-[0_0_40px_rgba(16,185,129,0.15)]'
+                    : 'border-white/10 bg-white/5 text-zinc-400 hover:border-white/20 hover:bg-white/10 hover:text-white'
+                }`}
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  {item.icon}
+                  {item.name}
+                </span>
+
+                {active === item.name && (
+                  <motion.div
+                    layoutId="active-pill"
+                    className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-cyan-500/10 to-blue-500/10"
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Floating Decorations */}
+        <motion.div
+          animate={{
+            y: [0, -20, 0],
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+          }}
+          className="absolute left-10 top-40 hidden h-20 w-20 rounded-full border border-white/10 bg-white/5 backdrop-blur-xl lg:block"
+        />
+
+        <motion.div
+          animate={{
+            y: [0, 25, 0],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+          }}
+          className="absolute right-10 top-[30%] hidden h-32 w-32 rounded-full border border-cyan-500/10 bg-cyan-500/5 backdrop-blur-xl lg:block"
+        />
+
+        {/* Projects Grid */}
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 xl:grid-cols-3">
+          {myProjects.map((project, idx) => (
+            <motion.div
+              key={project.title + idx}
+              initial={{ opacity: 0, y: 80 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.7,
+                delay: idx * 0.1,
+              }}
+              viewport={{ once: true }}
+              whileHover={{
+                y: -10,
+              }}
+              className="group relative"
+            >
+              {/* Glow */}
+              <div className="absolute -inset-[1px] rounded-[32px] bg-gradient-to-br from-emerald-500/20 via-cyan-500/10 to-blue-500/20 opacity-0 blur-xl transition-all duration-700 group-hover:opacity-100" />
+
+              {/* Card */}
+              <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-white/5 backdrop-blur-2xl">
+                {/* Top Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+                {/* Animated Border */}
+                <div className="absolute inset-0 rounded-[32px] border border-white/5 group-hover:border-emerald-400/20" />
+
+                {/* Project Card */}
+                <ProjectCard
+                  title={project.title}
+                  description={project.desc}
+                  image={project.logo}
+                  year={project.year}
+                  type={project.type}
+                  tags={project.tags}
+                  href={project.href}
+                  repo={project.repo}
+                  index={idx}
+                />
+
+                {/* Hover Overlay */}
+                <div className="pointer-events-none absolute right-5 top-5 flex h-12 w-12 translate-y-4 items-center justify-center rounded-2xl border border-white/10 bg-black/40 opacity-0 backdrop-blur-xl transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                  <IconArrowUpRight className="text-white" size={22} />
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Bottom CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="mt-28 text-center"
+        >
+          <div className="inline-flex  w-full flex-col items-center rounded-[32px] border border-white/10 bg-white/5 px-10 py-10 backdrop-blur-2xl">
+            <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20">
+              <IconSparkles
+                size={32}
+                className="text-emerald-300"
+              />
+            </div>
+
+            <h3 className="text-3xl font-bold">
+              Have an Idea?
+            </h3>
+
+            <p className="mt-4 max-w-xl text-zinc-400">
+              Let’s collaborate and build something visually stunning,
+              high-performing and impactful together.
+            </p>
+
+            <a
+              href="#contact"
+              className="mt-8 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-8 py-4 font-medium text-white transition-all duration-300 hover:scale-105 hover:shadow-[0_0_50px_rgba(16,185,129,0.4)]"
+            >
+              Start a Project
+            </a>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

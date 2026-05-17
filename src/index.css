@@ -490,7 +490,6 @@ body {
   }
 }
 
-/* Shuttle responsive adjustments */
 @media (max-width: 768px) {
   .shuttle {
     top: 15%;

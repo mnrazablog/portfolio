@@ -1,138 +1,280 @@
-import React, { useRef } from "react";
-import emailjs from "@emailjs/browser";
-import { IconBrandLinkedin, IconBrandX } from "@tabler/icons-react";
+import React, { useRef, useState } from 'react';
+import emailjs from '@emailjs/browser';
+import {
+  IconArrowUpRight,
+  IconBrandLinkedin,
+  IconBrandGithub,
+  IconBrandX,
+  IconMail,
+  IconSparkles,
+  IconCheck,
+} from '@tabler/icons-react';
 
 const Contact = () => {
   const form = useRef();
+  const [sent, setSent] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     emailjs
       .sendForm(
-        "service_edv71wh",
-        "template_snkz7dd",
+        'service_edv71wh',
+        'template_snkz7dd',
         form.current,
-        "y0s_PRp5UXaL55H1c"
+        'y0s_PRp5UXaL55H1c',
       )
       .then(
-        (result) => {
-          console.log("✅ Message Sent:", result.text);
-          alert("Message sent successfully!");
-          form.current.reset(); 
+        () => {
+          setSent(true);
+          form.current.reset();
+
+          setTimeout(() => {
+            setSent(false);
+          }, 3000);
         },
         (error) => {
-          console.error("❌ Error:", error.text);
-          alert("Something went wrong. Please try again!");
-        }
+          console.error(error.text);
+          alert('Something went wrong.');
+        },
       );
   };
 
   return (
-    <>
-      <div
-        id="contact"
-        className="mb-24 relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10"
-      >
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-2"></span>
-            <span className="tracking-wider">GET IN TOUCH</span>
-          </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-              Let's Create{" "}
+    <section
+      id="contact"
+      className="relative overflow-hidden py-28 text-white"
+    >
+      {/* Background */}
+      <div className="absolute inset-0">
+        <div className="absolute left-[-10%] top-0 h-[30rem] w-[30rem] rounded-full bg-emerald-500/10 blur-3xl" />
+
+        <div className="absolute bottom-[-10%] right-[-10%] h-[30rem] w-[30rem] rounded-full bg-cyan-500/10 blur-3xl" />
+
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:2rem_2rem]" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6">
+        {/* Heading */}
+        <div className="mx-auto mb-20 max-w-3xl text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-white/5 px-5 py-2 backdrop-blur-xl">
+            <IconSparkles size={16} className="text-emerald-300" />
+
+            <span className="text-sm tracking-[0.2em] text-emerald-300">
+              CONTACT
             </span>
-            <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
-              Together
+          </div>
+
+          <h2 className="mt-6 text-5xl font-black leading-tight sm:text-6xl">
+            Let’s Build Something
+            <span className="bg-gradient-to-r from-emerald-300 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
+              {' '}
+              Extraordinary
             </span>
           </h2>
-          <p className="text-xl text-gray-400 leading-relaxed">
-            Have a project in mind? I'm available for freelance work and exciting
-            opportunities. Let's turn your ideas into reality.
+
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-zinc-400">
+            Got an idea, startup or freelance opportunity? Let’s create modern,
+            high-performance digital experiences together.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-5 space-y-8">
-            <div className="rounded-2xl bg-gradient-to-br from-gray-950/90 via-gray-900/80 to-gray-800/60 backdrop-blur-md border border-gray-800/80 shadow-[0_0_25px_rgba(0,0,0,0.3)] p-6 md:p-8 relative">
-              <h3 className="text-xl md:text-2xl font-bold text-white mb-6">
-                Contact Information
-              </h3>
-              <p className="text-gray-400 text-sm mb-4">Email</p>
-              <a
-                href="mailto:noorullahraza07@gmail.com"
-                className="text-white text-base font-medium hover:text-emerald-400"
-              >
-                noorullahraza07@gmail.com
-              </a>
+        {/* Layout */}
+        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+          {/* Left Side */}
+          <div className="space-y-8">
+            {/* Floating Card */}
+            <div className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-8 backdrop-blur-2xl">
+              {/* Glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-cyan-500/10" />
 
-              <div className="flex space-x-3 mt-6">
-                <a
-                  href="https://linkedin.com/in/mnraza19"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/80 border border-gray-700 hover:border-teal-500/50 hover:bg-gray-800"
-                >
-                  <IconBrandLinkedin className="h-8 w-8 text-neutral-300" />
-                </a>
-                <a
-                  href="https://twitter.com/mnraza_codes"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-800/80 border border-gray-700 hover:border-cyan-500/50 hover:bg-gray-800"
-                >
-                  <IconBrandX className="h-6 w-6 text-neutral-300" />
-                </a>
+              <div className="absolute -right-10 top-0 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl transition-all duration-700 group-hover:scale-150" />
+
+              <div className="relative z-10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.3em] text-zinc-500">
+                      CONTACT INFO
+                    </p>
+
+                    <h3 className="mt-4 text-3xl font-bold">
+                      Let’s Connect
+                    </h3>
+                  </div>
+
+                  <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <IconArrowUpRight className="text-zinc-300" />
+                  </div>
+                </div>
+
+                {/* Email */}
+                <div className="mt-10 rounded-3xl border border-white/10 bg-black/20 p-5">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-300">
+                      <IconMail size={26} />
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-zinc-500">
+                        Email Address
+                      </p>
+
+                      <a
+                        href="mailto:noorullahraza007@gmail.com"
+                        className="mt-1 block text-base font-medium text-white transition-colors hover:text-emerald-300"
+                      >
+                        noorullahraza007@gmail.com
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Socials */}
+                <div className="mt-8">
+                  <p className="mb-5 text-sm uppercase tracking-[0.3em] text-zinc-500">
+                    Social Links
+                  </p>
+
+                  <div className="flex gap-4">
+                    <a
+                      href="https://linkedin.com/in/mnraza19"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-black/20 text-zinc-400 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-400/40 hover:text-white"
+                    >
+                      <IconBrandLinkedin
+                        size={28}
+                        className="transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </a>
+
+                    <a
+                      href="https://twitter.com/mnraza_codes"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-black/20 text-zinc-400 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:text-white"
+                    >
+                      <IconBrandX
+                        size={28}
+                        className="transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </a>
+
+                    <a
+                      href="#"
+                      className="group flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-black/20 text-zinc-400 transition-all duration-300 hover:-translate-y-1 hover:border-purple-400/40 hover:text-white"
+                    >
+                      <IconBrandGithub
+                        size={28}
+                        className="transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Quote */}
+                <div className="mt-10 rounded-3xl border border-white/10 bg-gradient-to-br from-emerald-500/10 via-transparent to-cyan-500/10 p-6">
+                  <p className="text-lg leading-8 text-zinc-300">
+                    “Creating experiences that are fast, modern and impossible
+                    to ignore.”
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-          <div className="lg:col-span-7">
-            <div className="rounded-xl bg-gradient-to-br from-gray-900/90 to-gray-800/70 backdrop-blur-sm border border-gray-800 shadow-xl p-8 relative">
-              <h3 className="text-2xl font-bold text-white mb-6">Send Message</h3>
-              <form ref={form} onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          {/* Right Side Form */}
+          <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-8 backdrop-blur-2xl">
+            {/* Background Glow */}
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-emerald-500/10" />
+
+            <div className="relative z-10">
+              <div className="mb-10">
+                <p className="text-xs uppercase tracking-[0.3em] text-zinc-500">
+                  SEND MESSAGE
+                </p>
+
+                <h3 className="mt-4 text-4xl font-black">
+                  Start Your Next Project
+                </h3>
+              </div>
+
+              <form
+                ref={form}
+                onSubmit={handleSubmit}
+                className="space-y-6"
+              >
+                <div className="grid gap-6 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm text-gray-400">Full Name</label>
+                    <label className="mb-3 block text-sm text-zinc-400">
+                      Full Name
+                    </label>
+
                     <input
+                      type="text"
                       name="name"
-                      className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none"
-                      placeholder="John Doe"
                       required
+                      placeholder="John Doe"
+                      className="w-full rounded-2xl border border-white/10 bg-black/20 px-5 py-4 text-white placeholder:text-zinc-500 focus:border-emerald-400/40 focus:outline-none"
                     />
                   </div>
+
                   <div>
-                    <label className="block text-sm text-gray-400">Email Address</label>
+                    <label className="mb-3 block text-sm text-zinc-400">
+                      Email Address
+                    </label>
+
                     <input
                       type="email"
                       name="email"
-                      className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none"
-                      placeholder="john@example.com"
                       required
+                      placeholder="john@example.com"
+                      className="w-full rounded-2xl border border-white/10 bg-black/20 px-5 py-4 text-white placeholder:text-zinc-500 focus:border-cyan-400/40 focus:outline-none"
                     />
                   </div>
                 </div>
+
                 <div>
-                  <label className="block text-sm text-gray-400">Message</label>
+                  <label className="mb-3 block text-sm text-zinc-400">
+                    Your Message
+                  </label>
+
                   <textarea
                     name="message"
-                    rows={4}
-                    className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none resize-none"
-                    placeholder="Tell me about your project or opportunity..."
+                    rows={6}
                     required
-                  ></textarea>
+                    placeholder="Tell me about your project..."
+                    className="w-full resize-none rounded-2xl border border-white/10 bg-black/20 px-5 py-4 text-white placeholder:text-zinc-500 focus:border-emerald-400/40 focus:outline-none"
+                  />
                 </div>
+
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 px-6 py-4 text-white font-medium transition-all duration-300"
+                  className="group relative flex w-full items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-6 py-5 text-base font-semibold transition-all duration-300 hover:scale-[1.01]"
                 >
-                  Send Message
+                  <span className="absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+                  <span className="relative z-10 flex items-center gap-2">
+                    {sent ? (
+                      <>
+                        <IconCheck size={22} />
+                        Message Sent Successfully
+                      </>
+                    ) : (
+                      <>
+                        Send Message
+                        <IconArrowUpRight size={22} />
+                      </>
+                    )}
+                  </span>
                 </button>
               </form>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </section>
   );
 };
+
 export default Contact;
